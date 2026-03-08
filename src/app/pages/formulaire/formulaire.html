@@ -1,0 +1,205 @@
+<div class="page-wrapper">
+
+  <!-- Header -->
+  <div class="bank-header">
+    <img src="/logo-stb.png" alt="STB Bank" class="bank-logo" />
+    <div class="client-info">
+      <span>{{ clientData?.nomComplet }}</span>
+      <span class="badge">{{ clientData?.villeAgence }}</span>
+    </div>
+  </div>
+
+  <!-- Onglets -->
+  <div class="tabs">
+    <button class="tab" [class.active]="ongletActif === 'overview'" (click)="ongletActif = 'overview'">Vue d'ensemble</button>
+    <button class="tab" [class.active]="ongletActif === 'relances'" (click)="ongletActif = 'relances'">Relances</button>
+    <button class="tab" [class.active]="ongletActif === 'statut'" (click)="ongletActif = 'statut'">Statut du dossier</button>
+  </div>
+
+  <!-- Vue d'ensemble -->
+  <ng-container *ngIf="ongletActif === 'overview'">
+
+    <div class="stats-grid">
+      <div class="stat-card">
+        <div class="stat-label">Montant impayé</div>
+        <div class="stat-value">{{ clientData?.montantImpaye | number }} TND</div>
+      </div>
+      <div class="stat-card danger">
+        <div class="stat-label">Frais dossier</div>
+        <div class="stat-value">{{ clientData?.fraisDossier | number }} TND</div>
+      </div>
+      <div class="stat-card success">
+        <div class="stat-label">Statut</div>
+        <div class="stat-value">{{ clientData?.statutDossier | uppercase }}</div>
+      </div>
+      <div class="stat-card warning">
+        <div class="stat-label">Agence</div>
+        <div class="stat-value">{{ clientData?.villeAgence }}</div>
+      </div>
+    </div>
+
+    <div class="progress-section">
+      <div class="progress-label">
+        <span>Progression du paiement</span>
+      </div>
+      <div class="progress-bar">
+        <div class="progress-fill" style="width: 70%"></div>
+      </div>
+      <div class="progress-legend">
+        <span>Payé</span>
+        <span>Impayé</span>
+      </div>
+    </div>
+
+    <div class="section">
+      <h3>📋 Détail des échéances</h3>
+      <table>
+        <thead>
+          <tr>
+            <th>Montant</th>
+            <th>Date</th>
+            <th>Statut</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr *ngFor="let e of clientData?.echeances">
+            <td>{{ e.montant | number }} TND</td>
+            <td>{{ e.dateEcheance | date:'dd/MM/yyyy' }}</td>
+            <td>
+              <span class="status"
+                [class.payé]="e.statut === 'paye'"
+                [class.partiel]="e.statut === 'partiel'"
+                [class.impayé]="e.statut === 'impaye'">
+                {{ e.statut | uppercase }}
+              </span>
+            </td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+
+    <div class="section" *ngIf="!submitted; else confirmation">
+      <h3>✍️ Déclarer une intention</h3>
+      <form [formGroup]="form" (ngSubmit)="onSubmit()">
+
+        <div class="field">
+          <label>Choisissez votre action *</label>
+          <select formControlName="typeIntention">
+            <option value="">-- Sélectionnez --</option>
+            <option *ngFor="let action of actionsDisponibles" [value]="action.value">
+              {{ action.label }}
+            </option>
+          </select>
+        </div>
+
+        <div class="field" *ngIf="form.get('typeIntention')?.value === 'promesse_paiement'">
+          <label>Date de paiement prévue *</label>
+          <input type="date" formControlName="datePaiementPrevue" />
+        </div>
+
+        <div class="field">
+          <label>Commentaire (optionnel)</label>
+          <textarea formControlName="commentaire" rows="3"
+            placeholder="Précisez votre situation..."></textarea>
+        </div>
+
+        <button type="submit" [disabled]="form.invalid || loading">
+          {{ loading ? 'Envoi en cours...' : '✅ Valider mon intention' }}
+        </button>
+
+      </form>
+    </div>
+
+    <ng-template #confirmation>
+      <div class="success-box">
+        <div>✅</div>
+        <h3>Intention enregistrée avec succès !</h3>
+        <p>Votre banque traitera votre demande dans les plus brefs délais.</p>
+      </div>
+    </ng-template>
+
+  </ng-container>
+
+  <!-- Relances -->
+  <ng-container *ngIf="ongletActif === 'relances'">
+    <div class="section">
+      <div class="relance-summary">
+        <div class="relance-stat">
+          <span class="relance-number">{{ clientData?.relances?.length }}</span>
+          <span class="relance-label">Relances envoyées</span>
+        </div>
+      </div>
+
+      <h3>📋 Historique des relances</h3>
+      <table>
+        <thead>
+          <tr>
+            <th>Date</th>
+            <th>Canal</th>
+            <th>Statut</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr *ngFor="let r of clientData?.relances">
+            <td>{{ r.dateRelance | date:'dd/MM/yyyy' }}</td>
+            <td>{{ r.moyen }}</td>
+            <td>
+              <span class="status"
+                [class.payé]="r.statut === 'envoye'"
+                [class.partiel]="r.statut === 'repondu'"
+                [class.impayé]="r.statut === 'sans_reponse'">
+                {{ r.statut | uppercase }}
+              </span>
+            </td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+  </ng-container>
+
+  <!-- Statut du dossier -->
+  <ng-container *ngIf="ongletActif === 'statut'">
+    <div class="section">
+      <div class="statut-header">
+        <h3>📁 Statut du dossier</h3>
+        <span class="status-global"
+          [class.encours]="clientData?.statutDossier === 'aimable'"
+          [class.contentieux]="clientData?.statutDossier === 'contentieux'"
+          [class.regle]="clientData?.statutDossier === 'regularise'">
+          {{ clientData?.statutDossier | uppercase }}
+        </span>
+      </div>
+      <p class="last-update">Dernière mise à jour : <strong>{{ clientData?.dateEcheance | date:'dd/MM/yyyy' }}</strong></p>
+
+      <div class="timeline">
+        <div class="timeline-item done">
+          <div class="timeline-dot"></div>
+          <div class="timeline-content">
+            <div class="timeline-title">Dossier ouvert</div>
+          </div>
+        </div>
+        <div class="timeline-item done">
+          <div class="timeline-dot"></div>
+          <div class="timeline-content">
+            <div class="timeline-title">Première relance envoyée</div>
+          </div>
+        </div>
+        <div class="timeline-item active">
+          <div class="timeline-dot"></div>
+          <div class="timeline-content">
+            <div class="timeline-title">En attente de règlement</div>
+            <div class="timeline-date">Aujourd'hui</div>
+          </div>
+        </div>
+        <div class="timeline-item pending">
+          <div class="timeline-dot"></div>
+          <div class="timeline-content">
+            <div class="timeline-title">Clôture du dossier</div>
+            <div class="timeline-date">En attente</div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </ng-container>
+
+</div>

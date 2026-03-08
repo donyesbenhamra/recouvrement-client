@@ -1,0 +1,269 @@
+* { box-sizing: border-box; margin: 0; padding: 0; }
+
+.page-wrapper {
+  max-width: 900px;
+  margin: 0 auto;
+  font-family: 'Segoe UI', sans-serif;
+  background: #f5f7fa;
+  min-height: 100vh;
+  padding-bottom: 40px;
+}
+.bank-logo {
+  height: 50px;
+  object-fit: contain;
+}
+
+/* Header */
+.bank-header {
+  background: #1a3c6e;
+  color: white;
+  padding: 16px 24px;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+.bank-name { font-size: 22px; font-weight: 700; }
+.client-info { display: flex; gap: 12px; align-items: center; font-size: 14px; }
+.badge {
+  background: rgba(255,255,255,0.2);
+  padding: 4px 10px;
+  border-radius: 20px;
+  font-size: 12px;
+}
+
+/* Tabs */
+.tabs {
+  background: white;
+  display: flex;
+  border-bottom: 2px solid #e0e6f0;
+  padding: 0 24px;
+}
+.tab {
+  padding: 14px 20px;
+  border: none;
+  background: none;
+  cursor: pointer;
+  font-size: 14px;
+  color: #666;
+  border-bottom: 3px solid transparent;
+  margin-bottom: -2px;
+}
+.tab.active {
+  color: #1a3c6e;
+  font-weight: 600;
+  border-bottom-color: #1a3c6e;
+}
+
+/* Stats */
+.stats-grid {
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
+  gap: 16px;
+  padding: 24px;
+}
+.stat-card {
+  background: white;
+  border-radius: 10px;
+  padding: 20px;
+  text-align: center;
+  border-top: 4px solid #1a3c6e;
+  box-shadow: 0 2px 8px rgba(0,0,0,0.06);
+}
+.stat-card.danger { border-top-color: #e53935; }
+.stat-card.success { border-top-color: #43a047; }
+.stat-card.warning { border-top-color: #fb8c00; }
+.stat-label { font-size: 12px; color: #888; margin-bottom: 8px; }
+.stat-value { font-size: 22px; font-weight: 700; color: #1a3c6e; }
+.stat-card.danger .stat-value { color: #e53935; }
+.stat-card.success .stat-value { color: #43a047; }
+.stat-card.warning .stat-value { color: #fb8c00; }
+
+/* Progress */
+.progress-section {
+  background: white;
+  margin: 0 24px 16px;
+  border-radius: 10px;
+  padding: 20px;
+  box-shadow: 0 2px 8px rgba(0,0,0,0.06);
+}
+.progress-label {
+  display: flex;
+  justify-content: space-between;
+  font-size: 14px;
+  font-weight: 600;
+  margin-bottom: 10px;
+  color: #333;
+}
+.progress-bar {
+  background: #e0e6f0;
+  border-radius: 10px;
+  height: 12px;
+  overflow: hidden;
+}
+.progress-fill {
+  background: linear-gradient(to right, #43a047, #1a3c6e);
+  height: 100%;
+  border-radius: 10px;
+  transition: width 0.5s ease;
+}
+.progress-legend {
+  display: flex;
+  justify-content: space-between;
+  font-size: 12px;
+  color: #888;
+  margin-top: 6px;
+}
+
+/* Section */
+.section {
+  background: white;
+  margin: 0 24px 16px;
+  border-radius: 10px;
+  padding: 20px;
+  box-shadow: 0 2px 8px rgba(0,0,0,0.06);
+}
+.section h3 { margin-bottom: 16px; color: #1a3c6e; font-size: 16px; }
+
+/* Table */
+table { width: 100%; border-collapse: collapse; }
+th {
+  background: #f0f4ff;
+  padding: 10px 14px;
+  text-align: left;
+  font-size: 13px;
+  color: #555;
+}
+td { padding: 10px 14px; border-bottom: 1px solid #f0f0f0; font-size: 14px; }
+tr:last-child td { border-bottom: none; }
+
+.status {
+  padding: 4px 10px;
+  border-radius: 20px;
+  font-size: 12px;
+  font-weight: 600;
+}
+.status.payé { background: #e8f5e9; color: #2e7d32; }
+.status.partiel { background: #fff3e0; color: #e65100; }
+.status.impayé { background: #ffebee; color: #c62828; }
+
+/* Form */
+.field { margin-bottom: 16px; }
+.field label { display: block; margin-bottom: 6px; font-weight: 600; font-size: 14px; color: #333; }
+.field select,
+.field input,
+.field textarea {
+  width: 100%;
+  padding: 10px;
+  border: 1px solid #ddd;
+  border-radius: 6px;
+  font-size: 14px;
+}
+.field select:focus,
+.field input:focus,
+.field textarea:focus {
+  outline: none;
+  border-color: #1a3c6e;
+}
+
+button[type="submit"] {
+  width: 100%;
+  padding: 12px;
+  background: #1a3c6e;
+  color: white;
+  border: none;
+  border-radius: 6px;
+  font-size: 15px;
+  cursor: pointer;
+  font-weight: 600;
+  transition: background 0.3s;
+}
+button[type="submit"]:hover:not(:disabled) { background: #2a5298; }
+button[type="submit"]:disabled { background: #aaa; cursor: not-allowed; }
+
+/* Success */
+.success-box {
+  text-align: center;
+  padding: 40px;
+  color: #2e7d32;
+}
+.success-box div { font-size: 50px; margin-bottom: 16px; }
+.success-box h3 { font-size: 20px; margin-bottom: 8px; }
+.success-box p { color: #555; }
+/* Relances */
+.relance-summary {
+  display: flex;
+  gap: 24px;
+  margin-bottom: 24px;
+}
+.relance-stat {
+  background: #f0f4ff;
+  border-radius: 10px;
+  padding: 16px 24px;
+  text-align: center;
+  flex: 1;
+}
+.relance-number {
+  display: block;
+  font-size: 28px;
+  font-weight: 700;
+  color: #1a3c6e;
+}
+.relance-number.next { font-size: 20px; }
+.relance-label { font-size: 13px; color: #888; margin-top: 4px; display: block; }
+
+/* Statut */
+.statut-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 8px;
+}
+.status-global {
+  padding: 6px 16px;
+  border-radius: 20px;
+  font-weight: 700;
+  font-size: 13px;
+}
+.status-global.amiable { background: #fff3e0; color: #e65100; }
+.status-global.contentieux { background: #ffebee; color: #c62828; }
+.status-global.regle { background: #e8f5e9; color: #2e7d32; }
+.status-global.judiciaire { background: #f3e5f5; color: #6a1b9a; }
+.status-global.regle { background: #e8f5e9; color: #2e7d32; }
+.status-global.contentieux { background: #ffebee; color: #c62828; }
+.last-update { font-size: 13px; color: #888; margin-bottom: 24px; }
+
+/* Timeline */
+.timeline { position: relative; padding-left: 30px; }
+.timeline::before {
+  content: '';
+  position: absolute;
+  left: 10px;
+  top: 0;
+  bottom: 0;
+  width: 2px;
+  background: #e0e6f0;
+}
+.timeline-item {
+  position: relative;
+  margin-bottom: 24px;
+  display: flex;
+  align-items: flex-start;
+  gap: 16px;
+}
+.timeline-dot {
+  width: 18px;
+  height: 18px;
+  border-radius: 50%;
+  background: #e0e6f0;
+  position: absolute;
+  left: -24px;
+  top: 2px;
+  border: 3px solid white;
+  box-shadow: 0 0 0 2px #e0e6f0;
+}
+.timeline-item.done .timeline-dot { background: #43a047; box-shadow: 0 0 0 2px #43a047; }
+.timeline-item.active .timeline-dot { background: #1a3c6e; box-shadow: 0 0 0 2px #1a3c6e; }
+.timeline-item.pending .timeline-dot { background: #ccc; }
+.timeline-title { font-weight: 600; font-size: 14px; color: #333; }
+.timeline-item.pending .timeline-title { color: #aaa; }
+.timeline-date { font-size: 12px; color: #888; margin-top: 2px; }
