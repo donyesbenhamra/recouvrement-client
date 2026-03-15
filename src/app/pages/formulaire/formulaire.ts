@@ -79,24 +79,30 @@ export class FormulaireComponent implements OnInit {
   }
 
   onSubmit(): void {
-    if (this.form.invalid) return;
+  if (this.form.invalid) return;
 
-    this.loading = true;
-    const payload = {
-      idDossier: this.idDossier,
-      typeIntention: this.form.value.typeIntention,
-      commentaire: this.form.value.commentaire,
-      datePaiementPrevue: this.form.value.datePaiementPrevue
-    };
+  this.loading = true;
+  const payload = {
+    idDossier: this.idDossier,
+    typeIntention: this.form.value.typeIntention,
+    commentaire: this.form.value.commentaire,
+    datePaiementPrevue: this.form.value.datePaiementPrevue
+  };
 
-    this.recouvrementService.soumettreReponse(payload).subscribe({
-      next: () => {
-        this.submitted = true;
-        this.loading = false;
-      },
-      error: () => {
-        this.loading = false;
-      }
-    });
-  }
+  this.recouvrementService.soumettreReponse(payload).subscribe({
+    next: () => {
+      this.loading = false;
+      this.router.navigate(['/confirmation'], {
+        state: {
+          idDossier: this.idDossier,
+          typeIntention: this.form.value.typeIntention,
+          token: this.token
+        }
+      });
+    },
+    error: () => {
+      this.loading = false;
+    }
+  });
 }
+  }

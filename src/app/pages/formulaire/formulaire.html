@@ -1,4 +1,4 @@
-<<div class="page-wrapper">
+<div class="page-wrapper">
 
   <!-- Header -->
   <div class="bank-header">
@@ -89,12 +89,15 @@
 
         <div class="field">
           <label>Choisissez votre action *</label>
-          <select formControlName="typeIntention">
-            <option value="">-- Sélectionnez --</option>
-            <option *ngFor="let action of actionsDisponibles" [value]="action.value">
-              {{ action.label }}
-            </option>
-          </select>
+          <div class="intention-options">
+            <div
+              *ngFor="let action of actionsDisponibles"
+              class="intention-card"
+              [class.selected]="form.get('typeIntention')?.value === action.value"
+              (click)="form.get('typeIntention')?.setValue(action.value)">
+              <span class="intention-label">{{ action.label }}</span>
+            </div>
+          </div>
         </div>
 
         <div class="field" *ngIf="form.get('typeIntention')?.value === 'promesse_paiement'">
@@ -168,7 +171,7 @@
       <div class="statut-header">
         <h3>📁 Statut du dossier</h3>
         <span class="status-global"
-          [class.encours]="dossier?.statutDossier === 'aimable'"
+          [class.amiable]="dossier?.statutDossier === 'aimable'"
           [class.contentieux]="dossier?.statutDossier === 'contentieux'"
           [class.regle]="dossier?.statutDossier === 'regularise'">
           {{ dossier?.statutDossier | uppercase }}

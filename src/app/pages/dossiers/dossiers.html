@@ -20,8 +20,8 @@
 
       <div class="dossier-header">
         <div>
-          <span class="dossier-numero">Dossier #{{ dossier.idDossier }}</span>
-          <span class="type-emprunt">{{ dossier.typeEmprunt }}</span>
+          <span class="dossier-numero">{{ dossier.typeEmprunt }}</span>
+         
         </div>
         <span class="statut"
           [class.aimable]="dossier.statutDossier === 'aimable'"
