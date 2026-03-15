@@ -1,14 +1,19 @@
 import { Routes } from '@angular/router';
 import { FormulaireComponent } from './pages/formulaire/formulaire';
 import { ConfirmationComponent } from './pages/confirmation/confirmation';
-import { TokenInvalidecomponent } from './pages/token-invalide/token-invalide';
+import { TokenInvalideComponent } from './pages/token-invalide/token-invalide';
+import { DossiersComponent } from './pages/dossiers/dossiers';
 import { tokenGuard } from './guards/token-guard';
 
 export const routes: Routes = [
   { 
-    path: 'formulaire/:token', 
-    component: FormulaireComponent,
+    path: 'client/:token', 
+    component: DossiersComponent,
     canActivate: [tokenGuard]
+  },
+  { 
+    path: 'formulaire/:token/:idDossier', 
+    component: FormulaireComponent
   },
   { 
     path: 'confirmation', 
@@ -16,7 +21,7 @@ export const routes: Routes = [
   },
   { 
     path: 'token-invalide', 
-    component: TokenInvalidecomponent
+    component: TokenInvalideComponent 
   },
   { 
     path: '**', 

@@ -2,7 +2,7 @@ import { Component, OnInit } from '@angular/core';
 import { ActivatedRoute, Router } from '@angular/router';
 import { FormBuilder, FormGroup, Validators, ReactiveFormsModule } from '@angular/forms';
 import { CommonModule } from '@angular/common';
-import { TokenService, ClientHistoriqueDto } from '../../services/token';
+import { TokenService, ClientHistoriqueDto, DossierDto } from '../../services/token';
 import { RecouvrementService } from '../../services/recouvrement';
 
 @Component({
@@ -15,7 +15,9 @@ import { RecouvrementService } from '../../services/recouvrement';
 export class FormulaireComponent implements OnInit {
 
   clientData: ClientHistoriqueDto | null = null;
+  dossier: DossierDto | null = null;
   token!: string;
+  idDossier!: number;
   form!: FormGroup;
   submitted = false;
   loading = false;
@@ -37,9 +39,20 @@ export class FormulaireComponent implements OnInit {
 
   ngOnInit(): void {
     this.token = this.route.snapshot.paramMap.get('token')!;
+    this.idDossier = Number(this.route.snapshot.paramMap.get('idDossier'));
     this.clientData = this.tokenService.getClientDataFromSession();
 
     if (!this.clientData) {
+      this.router.navigate(['/token-invalide']);
+      return;
+    }
+
+    // Récupère le bon dossier depuis la liste
+    this.dossier = this.clientData.dossiers.find(
+      d => d.idDossier === this.idDossier
+    ) || null;
+
+    if (!this.dossier) {
       this.router.navigate(['/token-invalide']);
       return;
     }
@@ -61,8 +74,8 @@ export class FormulaireComponent implements OnInit {
     });
   }
 
-  get idDossier(): number {
-    return 0; // sera remplacé par la vraie valeur depuis clientData
+  retourDossiers(): void {
+    this.router.navigate(['/client', this.token]);
   }
 
   onSubmit(): void {
@@ -70,7 +83,7 @@ export class FormulaireComponent implements OnInit {
 
     this.loading = true;
     const payload = {
-      idDossier: 1, // à remplacer par le vrai idDossier
+      idDossier: this.idDossier,
       typeIntention: this.form.value.typeIntention,
       commentaire: this.form.value.commentaire,
       datePaiementPrevue: this.form.value.datePaiementPrevue
@@ -78,7 +91,6 @@ export class FormulaireComponent implements OnInit {
 
     this.recouvrementService.soumettreReponse(payload).subscribe({
       next: () => {
-        this.tokenService.clearClientData();
         this.submitted = true;
         this.loading = false;
       },

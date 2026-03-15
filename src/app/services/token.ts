@@ -2,20 +2,6 @@ import { Injectable } from '@angular/core';
 import { HttpClient } from '@angular/common/http';
 import { Observable } from 'rxjs';
 
-export interface ClientHistoriqueDto {
-  nomComplet: string;
-  idAgence: number;
-  villeAgence: string;
-  montantImpaye: number;
-  fraisDossier: number;
-  statutDossier: string;
-  dateEcheance: string;
-  echeances: EcheanceDto[];
-  paiements: any[];
-  relances: RelanceDto[];
-  communications: any[];
-}
-
 export interface EcheanceDto {
   montant: number;
   dateEcheance: string;
@@ -26,6 +12,26 @@ export interface RelanceDto {
   dateRelance: string;
   moyen: string;
   statut: string;
+}
+
+export interface DossierDto {
+  idDossier: number;
+  typeEmprunt: string;
+  montantImpaye: number;
+  fraisDossier: number;
+  statutDossier: string;
+  dateEcheance: string;
+  echeances: EcheanceDto[];
+  paiements: any[];
+  relances: RelanceDto[];
+  communications: any[];
+}
+
+export interface ClientHistoriqueDto {
+  nomComplet: string;
+  idAgence: number;
+  villeAgence: string;
+  dossiers: DossierDto[];
 }
 
 @Injectable({ providedIn: 'root' })

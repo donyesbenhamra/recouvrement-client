@@ -6,4 +6,4 @@ import { Component } from '@angular/core';
   templateUrl: './token-invalide.html',
   styleUrl: './token-invalide.css',
 })
-export class TokenInvalidecomponent {}
+export class TokenInvalideComponent {}

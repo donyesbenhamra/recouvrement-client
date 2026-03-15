@@ -1,0 +1,55 @@
+<div class="page-wrapper">
+
+  <div class="bank-header">
+    <img src="/logo-stb.png" alt="STB Bank" class="bank-logo" />
+    <div class="client-info">
+      <span>{{ clientData?.nomComplet }}</span>
+      <span class="badge">{{ clientData?.villeAgence }}</span>
+    </div>
+  </div>
+
+  <div class="page-title">
+    <h2>📁 Mes dossiers de recouvrement</h2>
+    <p>Sélectionnez un dossier pour consulter les détails et déclarer une intention</p>
+  </div>
+
+  <div class="dossiers-list">
+    <div class="dossier-card"
+      *ngFor="let dossier of clientData?.dossiers"
+      (click)="ouvrirDossier(dossier.idDossier)">
+
+      <div class="dossier-header">
+        <div>
+          <span class="dossier-numero">Dossier #{{ dossier.idDossier }}</span>
+          <span class="type-emprunt">{{ dossier.typeEmprunt }}</span>
+        </div>
+        <span class="statut"
+          [class.aimable]="dossier.statutDossier === 'aimable'"
+          [class.contentieux]="dossier.statutDossier === 'contentieux'"
+          [class.regularise]="dossier.statutDossier === 'regularise'">
+          {{ dossier.statutDossier | uppercase }}
+        </span>
+      </div>
+
+      <div class="dossier-body">
+        <div class="dossier-info">
+          <span>Montant impayé</span>
+          <strong>{{ dossier.montantImpaye | number }} TND</strong>
+        </div>
+        <div class="dossier-info">
+          <span>Date échéance</span>
+          <strong>{{ dossier.dateEcheance | date:'dd/MM/yyyy' }}</strong>
+        </div>
+        <div class="dossier-info">
+          <span>Frais dossier</span>
+          <strong>{{ dossier.fraisDossier | number }} TND</strong>
+        </div>
+      </div>
+
+      <div class="dossier-footer">
+        <button>Consulter le dossier →</button>
+      </div>
+    </div>
+  </div>
+
+</div>

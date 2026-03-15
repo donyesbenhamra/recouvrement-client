@@ -1,4 +1,4 @@
-<div class="page-wrapper">
+<<div class="page-wrapper">
 
   <!-- Header -->
   <div class="bank-header">
@@ -7,6 +7,11 @@
       <span>{{ clientData?.nomComplet }}</span>
       <span class="badge">{{ clientData?.villeAgence }}</span>
     </div>
+  </div>
+
+  <!-- Bouton retour -->
+  <div class="back-btn-wrapper">
+    <button class="back-btn" (click)="retourDossiers()">← Retour à mes dossiers</button>
   </div>
 
   <!-- Onglets -->
@@ -22,15 +27,15 @@
     <div class="stats-grid">
       <div class="stat-card">
         <div class="stat-label">Montant impayé</div>
-        <div class="stat-value">{{ clientData?.montantImpaye | number }} TND</div>
+        <div class="stat-value">{{ dossier?.montantImpaye | number }} TND</div>
       </div>
       <div class="stat-card danger">
         <div class="stat-label">Frais dossier</div>
-        <div class="stat-value">{{ clientData?.fraisDossier | number }} TND</div>
+        <div class="stat-value">{{ dossier?.fraisDossier | number }} TND</div>
       </div>
       <div class="stat-card success">
         <div class="stat-label">Statut</div>
-        <div class="stat-value">{{ clientData?.statutDossier | uppercase }}</div>
+        <div class="stat-value">{{ dossier?.statutDossier | uppercase }}</div>
       </div>
       <div class="stat-card warning">
         <div class="stat-label">Agence</div>
@@ -62,7 +67,7 @@
           </tr>
         </thead>
         <tbody>
-          <tr *ngFor="let e of clientData?.echeances">
+          <tr *ngFor="let e of dossier?.echeances">
             <td>{{ e.montant | number }} TND</td>
             <td>{{ e.dateEcheance | date:'dd/MM/yyyy' }}</td>
             <td>
@@ -125,7 +130,7 @@
     <div class="section">
       <div class="relance-summary">
         <div class="relance-stat">
-          <span class="relance-number">{{ clientData?.relances?.length }}</span>
+          <span class="relance-number">{{ dossier?.relances?.length }}</span>
           <span class="relance-label">Relances envoyées</span>
         </div>
       </div>
@@ -140,7 +145,7 @@
           </tr>
         </thead>
         <tbody>
-          <tr *ngFor="let r of clientData?.relances">
+          <tr *ngFor="let r of dossier?.relances">
             <td>{{ r.dateRelance | date:'dd/MM/yyyy' }}</td>
             <td>{{ r.moyen }}</td>
             <td>
@@ -163,13 +168,13 @@
       <div class="statut-header">
         <h3>📁 Statut du dossier</h3>
         <span class="status-global"
-          [class.encours]="clientData?.statutDossier === 'aimable'"
-          [class.contentieux]="clientData?.statutDossier === 'contentieux'"
-          [class.regle]="clientData?.statutDossier === 'regularise'">
-          {{ clientData?.statutDossier | uppercase }}
+          [class.encours]="dossier?.statutDossier === 'aimable'"
+          [class.contentieux]="dossier?.statutDossier === 'contentieux'"
+          [class.regle]="dossier?.statutDossier === 'regularise'">
+          {{ dossier?.statutDossier | uppercase }}
         </span>
       </div>
-      <p class="last-update">Dernière mise à jour : <strong>{{ clientData?.dateEcheance | date:'dd/MM/yyyy' }}</strong></p>
+      <p class="last-update">Dernière mise à jour : <strong>{{ dossier?.dateEcheance | date:'dd/MM/yyyy' }}</strong></p>
 
       <div class="timeline">
         <div class="timeline-item done">
