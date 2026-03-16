@@ -1,7 +1,7 @@
 * { box-sizing: border-box; margin: 0; padding: 0; }
 
 .page-wrapper {
-  max-width: 900px;
+  max-width: 1200px;
   margin: 0 auto;
   font-family: 'Segoe UI', sans-serif;
   background: #f5f7fa;

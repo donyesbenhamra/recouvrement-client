@@ -32,13 +32,13 @@
     <div class="stat-label">Montant total</div>
     <div class="stat-value">{{ (dossier?.montantInitial || 0) | number }} TND</div>
   </div>
+  <div class="stat-card success">
+  <div class="stat-label">Montant payé</div>
+  <div class="stat-value">{{ montantPaye | number }} TND</div>
+</div>
   <div class="stat-card danger">
     <div class="stat-label">Montant impayé</div>
     <div class="stat-value">{{ dossier?.montantImpaye | number }} TND</div>
-  </div>
-  <div class="stat-card warning">
-    <div class="stat-label">Frais dossier</div>
-    <div class="stat-value">{{ dossier?.fraisDossier | number }} TND</div>
   </div>
   <div class="stat-card danger">
     <div class="stat-label">Jours de retard</div>

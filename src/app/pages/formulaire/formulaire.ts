@@ -75,6 +75,10 @@ export class FormulaireComponent implements OnInit {
       dateCtrl?.updateValueAndValidity();
     });
   }
+  get montantPaye(): number {
+  if (!this.dossier?.paiements) return 0;
+  return this.dossier.paiements.reduce((sum, p) => sum + p.montantPaye, 0);
+}
 
   get joursRetard(): number {
     if (!this.dossier?.dateEcheance) return 0;
