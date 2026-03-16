@@ -17,6 +17,7 @@ export interface RelanceDto {
 export interface DossierDto {
   idDossier: number;
   typeEmprunt: string;
+  montantInitial: number;
   montantImpaye: number;
   fraisDossier: number;
   statutDossier: string;

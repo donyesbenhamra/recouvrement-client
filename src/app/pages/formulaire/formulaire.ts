@@ -4,6 +4,7 @@ import { FormBuilder, FormGroup, Validators, ReactiveFormsModule } from '@angula
 import { CommonModule } from '@angular/common';
 import { TokenService, ClientHistoriqueDto, DossierDto } from '../../services/token';
 import { RecouvrementService } from '../../services/recouvrement';
+import { HttpClient } from '@angular/common/http';
 
 @Component({
   selector: 'app-formulaire',
@@ -22,6 +23,7 @@ export class FormulaireComponent implements OnInit {
   submitted = false;
   loading = false;
   ongletActif = 'overview';
+  fichierSelectionne: File | null = null;
 
   actionsDisponibles = [
     { value: 'paiement_immediat', label: 'Paiement immédiat' },
@@ -34,7 +36,8 @@ export class FormulaireComponent implements OnInit {
     private router: Router,
     private tokenService: TokenService,
     private fb: FormBuilder,
-    private recouvrementService: RecouvrementService
+    private recouvrementService: RecouvrementService,
+    private http: HttpClient
   ) {}
 
   ngOnInit(): void {
@@ -47,7 +50,6 @@ export class FormulaireComponent implements OnInit {
       return;
     }
 
-    // Récupère le bon dossier depuis la liste
     this.dossier = this.clientData.dossiers.find(
       d => d.idDossier === this.idDossier
     ) || null;
@@ -74,35 +76,68 @@ export class FormulaireComponent implements OnInit {
     });
   }
 
+  get joursRetard(): number {
+    if (!this.dossier?.dateEcheance) return 0;
+    const echeance = new Date(this.dossier.dateEcheance);
+    const today = new Date();
+    const diff = today.getTime() - echeance.getTime();
+    return Math.max(0, Math.floor(diff / (1000 * 60 * 60 * 24)));
+  }
+
+  onFileSelected(event: any): void {
+    this.fichierSelectionne = event.target.files[0] || null;
+  }
+
+  uploadFichier(): void {
+    if (!this.fichierSelectionne) return;
+    const formData = new FormData();
+    formData.append('fichier', this.fichierSelectionne);
+    this.http.post(`http://localhost:5203/api/client/upload/${this.token}`, formData).subscribe({
+      next: () => {
+        alert('Fichier envoyé avec succès !');
+        this.fichierSelectionne = null;
+      },
+      error: () => alert('Erreur lors de l\'envoi.')
+    });
+  }
+
+  telechargerRecu(): void {
+    window.open(`http://localhost:5203/api/client/recu/${this.token}/${this.idDossier}`, '_blank');
+  }
+
+  telechargerHistorique(): void {
+    window.open(`http://localhost:5203/api/client/historique-pdf/${this.token}/${this.idDossier}`, '_blank');
+  }
+
   retourDossiers(): void {
     this.router.navigate(['/client', this.token]);
   }
 
   onSubmit(): void {
-  if (this.form.invalid) return;
+    if (this.form.invalid) return;
 
-  this.loading = true;
-  const payload = {
-    idDossier: this.idDossier,
-    typeIntention: this.form.value.typeIntention,
-    commentaire: this.form.value.commentaire,
-    datePaiementPrevue: this.form.value.datePaiementPrevue
-  };
+    this.loading = true;
+    const payload = {
+      idDossier: this.idDossier,
+      typeIntention: this.form.value.typeIntention,
+      commentaire: this.form.value.commentaire,
+      datePaiementPrevue: this.form.value.datePaiementPrevue
+    };
 
-  this.recouvrementService.soumettreReponse(payload).subscribe({
-    next: () => {
-      this.loading = false;
-      this.router.navigate(['/confirmation'], {
-        state: {
-          idDossier: this.idDossier,
-          typeIntention: this.form.value.typeIntention,
-          token: this.token
-        }
-      });
-    },
-    error: () => {
-      this.loading = false;
-    }
-  });
-}
+    this.recouvrementService.soumettreReponse(payload).subscribe({
+      next: () => {
+        this.loading = false;
+        this.router.navigate(['/confirmation'], {
+          state: {
+            idDossier: this.idDossier,
+            typeIntention: this.form.value.typeIntention,
+            token: this.token
+          }
+        });
+      },
+      error: () => {
+        this.loading = false;
+      }
+    });
   }
+}
