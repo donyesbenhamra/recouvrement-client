@@ -1,6 +1,5 @@
 <div class="page-wrapper">
 
-  <!-- Header -->
   <div class="bank-header">
     <img src="/logo-stb.png" alt="STB Bank" class="bank-logo" />
     <div class="client-info">
@@ -9,47 +8,43 @@
     </div>
   </div>
 
-  <!-- Bouton retour -->
   <div class="back-btn-wrapper">
     <button class="back-btn" (click)="retourDossiers()">← Retour à mes dossiers</button>
   </div>
 
-  <!-- Onglets -->
-<div class="tabs">
-  <button class="tab" [class.active]="ongletActif === 'overview'" (click)="ongletActif = 'overview'">📊 Vue d'ensemble</button>
-  <button class="tab" [class.active]="ongletActif === 'echeances'" (click)="ongletActif = 'echeances'">📅 Échéances</button>
-  <button class="tab" [class.active]="ongletActif === 'paiements'" (click)="ongletActif = 'paiements'">💵 Paiements</button>
-  <button class="tab" [class.active]="ongletActif === 'relances'" (click)="ongletActif = 'relances'">📞 Relances</button>
-  <button class="tab" [class.active]="ongletActif === 'communications'" (click)="ongletActif = 'communications'">💬 Communications</button>
-  <button class="tab" [class.active]="ongletActif === 'actions'" (click)="ongletActif = 'actions'">📋 Actions</button>
-</div>
+  <div class="tabs">
+    <button class="tab" [class.active]="ongletActif === 'overview'" (click)="ongletActif = 'overview'">📊 Vue d'ensemble</button>
+    <button class="tab" [class.active]="ongletActif === 'echeances'" (click)="ongletActif = 'echeances'">📅 Échéances</button>
+    <button class="tab" [class.active]="ongletActif === 'paiements'" (click)="ongletActif = 'paiements'">💵 Paiements</button>
+    <button class="tab" [class.active]="ongletActif === 'relances'" (click)="ongletActif = 'relances'">📞 Relances</button>
+    <button class="tab" [class.active]="ongletActif === 'communications'" (click)="ongletActif = 'communications'">💬 Communications</button>
+    <button class="tab" [class.active]="ongletActif === 'actions'" (click)="ongletActif = 'actions'">📋 Actions</button>
+  </div>
 
   <!-- Vue d'ensemble -->
   <ng-container *ngIf="ongletActif === 'overview'">
 
     <div class="stats-grid">
-  <div class="stat-card">
-    <div class="stat-label">Montant total</div>
-    <div class="stat-value">{{ (dossier?.montantInitial || 0) | number }} TND</div>
-  </div>
-  <div class="stat-card success">
-  <div class="stat-label">Montant payé</div>
-  <div class="stat-value">{{ montantPaye | number }} TND</div>
-</div>
-  <div class="stat-card danger">
-    <div class="stat-label">Montant impayé</div>
-    <div class="stat-value">{{ dossier?.montantImpaye | number }} TND</div>
-  </div>
-  <div class="stat-card danger">
-    <div class="stat-label">Jours de retard</div>
-    <div class="stat-value">{{ joursRetard }} jours</div>
-  </div>
-</div>
+      <div class="stat-card">
+        <div class="stat-label">Montant total</div>
+        <div class="stat-value">{{ (dossier?.montantInitial || 0) | number }} TND</div>
+      </div>
+      <div class="stat-card success">
+        <div class="stat-label">Montant payé</div>
+        <div class="stat-value">{{ montantPaye | number }} TND</div>
+      </div>
+      <div class="stat-card danger">
+        <div class="stat-label">Montant impayé</div>
+        <div class="stat-value">{{ dossier?.montantImpaye | number }} TND</div>
+      </div>
+      <div class="stat-card danger">
+        <div class="stat-label">Jours de retard</div>
+        <div class="stat-value">{{ joursRetard }} jours</div>
+      </div>
+    </div>
 
     <div class="progress-section">
-      <div class="progress-label">
-        <span>Progression du paiement</span>
-      </div>
+      <div class="progress-label"><span>Progression du paiement</span></div>
       <div class="progress-bar">
         <div class="progress-fill" style="width: 70%"></div>
       </div>
@@ -86,15 +81,14 @@
       </table>
     </div>
 
-    <div class="section" *ngIf="!submitted; else confirmation">
+    <div class="section" *ngIf="!submitted; else confirmationBlock">
       <h3>✍️ Déclarer une intention</h3>
       <form [formGroup]="form" (ngSubmit)="onSubmit()">
 
         <div class="field">
           <label>Choisissez votre action *</label>
           <div class="intention-options">
-            <div
-              *ngFor="let action of actionsDisponibles"
+            <div *ngFor="let action of actionsDisponibles"
               class="intention-card"
               [class.selected]="form.get('typeIntention')?.value === action.value"
               (click)="form.get('typeIntention')?.setValue(action.value)">
@@ -106,6 +100,11 @@
         <div class="field" *ngIf="form.get('typeIntention')?.value === 'promesse_paiement'">
           <label>Date de paiement prévue *</label>
           <input type="date" formControlName="datePaiementPrevue" />
+        </div>
+
+        <div class="field" *ngIf="form.get('typeIntention')?.value === 'paiement_partiel'">
+          <label>Montant proposé *</label>
+          <input type="number" formControlName="montantPropose" placeholder="Montant en TND" />
         </div>
 
         <div class="field">
@@ -121,7 +120,7 @@
       </form>
     </div>
 
-    <ng-template #confirmation>
+    <ng-template #confirmationBlock>
       <div class="success-box">
         <div>✅</div>
         <h3>Intention enregistrée avec succès !</h3>
@@ -129,6 +128,54 @@
       </div>
     </ng-template>
 
+  </ng-container>
+
+  <!-- Échéances -->
+  <ng-container *ngIf="ongletActif === 'echeances'">
+    <div class="section">
+      <h3>📅 Détail des échéances</h3>
+      <table>
+        <thead>
+          <tr><th>Montant</th><th>Date</th><th>Statut</th></tr>
+        </thead>
+        <tbody>
+          <tr *ngFor="let e of dossier?.echeances">
+            <td>{{ e.montant | number }} TND</td>
+            <td>{{ e.dateEcheance | date:'dd/MM/yyyy' }}</td>
+            <td>
+              <span class="status"
+                [class.payé]="e.statut === 'paye'"
+                [class.partiel]="e.statut === 'partiel'"
+                [class.impayé]="e.statut === 'impaye'">
+                {{ e.statut | uppercase }}
+              </span>
+            </td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+  </ng-container>
+
+  <!-- Paiements -->
+  <ng-container *ngIf="ongletActif === 'paiements'">
+    <div class="section">
+      <h3>💵 Historique des paiements</h3>
+      <table>
+        <thead>
+          <tr><th>Montant payé</th><th>Date</th><th>Type</th></tr>
+        </thead>
+        <tbody>
+          <tr *ngFor="let p of dossier?.paiements">
+            <td>{{ p.montantPaye | number }} TND</td>
+            <td>{{ p.datePaiement | date:'dd/MM/yyyy' }}</td>
+            <td>{{ p.typePaiement }}</td>
+          </tr>
+          <tr *ngIf="dossier?.paiements?.length === 0">
+            <td colspan="3" style="text-align:center; color:#888;">Aucun paiement enregistré</td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
   </ng-container>
 
   <!-- Relances -->
@@ -140,15 +187,10 @@
           <span class="relance-label">Relances envoyées</span>
         </div>
       </div>
-
       <h3>📋 Historique des relances</h3>
       <table>
         <thead>
-          <tr>
-            <th>Date</th>
-            <th>Canal</th>
-            <th>Statut</th>
-          </tr>
+          <tr><th>Date</th><th>Canal</th><th>Statut</th></tr>
         </thead>
         <tbody>
           <tr *ngFor="let r of dossier?.relances">
@@ -168,173 +210,71 @@
     </div>
   </ng-container>
 
-  <!-- Statut du dossier -->
-  <ng-container *ngIf="ongletActif === 'statut'">
+  <!-- Communications -->
+  <ng-container *ngIf="ongletActif === 'communications'">
     <div class="section">
-      <div class="statut-header">
-        <h3>📁 Statut du dossier</h3>
-        <span class="status-global"
-          [class.amiable]="dossier?.statutDossier === 'aimable'"
-          [class.contentieux]="dossier?.statutDossier === 'contentieux'"
-          [class.regle]="dossier?.statutDossier === 'regularise'">
-          {{ dossier?.statutDossier | uppercase }}
-        </span>
+      <h3>💬 Communications</h3>
+      <div class="communications-list">
+        <ng-container *ngFor="let comm of dossier?.communications">
+          <div class="comm-item client" *ngIf="comm.origine === 'agent'">
+            <div class="comm-header">
+              <span class="comm-origine">🏦 BANQUE</span>
+              <span class="comm-date">{{ comm.dateEnvoi | date:'dd/MM/yyyy HH:mm' }}</span>
+            </div>
+            <div class="comm-message">{{ comm.message }}</div>
+          </div>
+        </ng-container>
+        <div style="color:#888; text-align:center; padding:20px;">
+          Aucun message de votre banque
+        </div>
       </div>
-      <p class="last-update">Dernière mise à jour : <strong>{{ dossier?.dateEcheance | date:'dd/MM/yyyy' }}</strong></p>
+    </div>
+  </ng-container>
 
-      <div class="timeline">
-        <div class="timeline-item done">
-          <div class="timeline-dot"></div>
-          <div class="timeline-content">
-            <div class="timeline-title">Dossier ouvert</div>
+  <!-- Actions -->
+  <ng-container *ngIf="ongletActif === 'actions'">
+    <div class="section">
+      <h3>📥 Documents disponibles</h3>
+      <p class="section-desc">Téléchargez vos documents liés à ce dossier</p>
+      <div class="documents-list">
+        <div class="document-item">
+          <div class="doc-icon">📄</div>
+          <div class="doc-info">
+            <div class="doc-title">Reçu de situation</div>
+            <div class="doc-date">Montant impayé : {{ dossier?.montantImpaye | number }} TND</div>
+          </div>
+          <button class="dl-btn" (click)="telechargerRecu()">⬇ Télécharger</button>
+        </div>
+        <div class="document-item">
+          <div class="doc-icon">📄</div>
+          <div class="doc-info">
+            <div class="doc-title">Historique des actions</div>
+            <div class="doc-date">Généré automatiquement</div>
+          </div>
+          <button class="dl-btn" (click)="telechargerHistorique()">⬇ Télécharger</button>
+        </div>
+      </div>
+    </div>
+
+    <div class="section">
+      <h3>⚡ Actions rapides</h3>
+      <div class="actions-rapides">
+        <div class="action-card" (click)="ongletActif = 'overview'">
+          <span class="action-icon">✍️</span>
+          <div>
+            <div class="action-title">Déclarer une intention</div>
+            <div class="action-desc">Paiement ou réclamation</div>
           </div>
         </div>
-        <div class="timeline-item done">
-          <div class="timeline-dot"></div>
-          <div class="timeline-content">
-            <div class="timeline-title">Première relance envoyée</div>
-          </div>
-        </div>
-        <div class="timeline-item active">
-          <div class="timeline-dot"></div>
-          <div class="timeline-content">
-            <div class="timeline-title">En attente de règlement</div>
-            <div class="timeline-date">Aujourd'hui</div>
-          </div>
-        </div>
-        <div class="timeline-item pending">
-          <div class="timeline-dot"></div>
-          <div class="timeline-content">
-            <div class="timeline-title">Clôture du dossier</div>
-            <div class="timeline-date">En attente</div>
+        <div class="action-card">
+          <span class="action-icon">📞</span>
+          <div>
+            <div class="action-title">Contacter l'agence</div>
+            <div class="action-desc">Support client</div>
           </div>
         </div>
       </div>
     </div>
   </ng-container>
-  <!-- Échéances -->
-<ng-container *ngIf="ongletActif === 'echeances'">
-  <div class="section">
-    <h3>📅 Détail des échéances</h3>
-    <table>
-      <thead>
-        <tr>
-          <th>Montant</th>
-          <th>Date</th>
-          <th>Statut</th>
-        </tr>
-      </thead>
-      <tbody>
-        <tr *ngFor="let e of dossier?.echeances">
-          <td>{{ e.montant | number }} TND</td>
-          <td>{{ e.dateEcheance | date:'dd/MM/yyyy' }}</td>
-          <td>
-            <span class="status"
-              [class.payé]="e.statut === 'paye'"
-              [class.partiel]="e.statut === 'partiel'"
-              [class.impayé]="e.statut === 'impaye'">
-              {{ e.statut | uppercase }}
-            </span>
-          </td>
-        </tr>
-      </tbody>
-    </table>
-  </div>
-</ng-container>
 
-<!-- Paiements -->
-<ng-container *ngIf="ongletActif === 'paiements'">
-  <div class="section">
-    <h3>💵 Historique des paiements</h3>
-    <table>
-      <thead>
-        <tr>
-          <th>Montant payé</th>
-          <th>Date</th>
-          <th>Type</th>
-        </tr>
-      </thead>
-      <tbody>
-        <tr *ngFor="let p of dossier?.paiements">
-          <td>{{ p.montantPaye | number }} TND</td>
-          <td>{{ p.datePaiement | date:'dd/MM/yyyy' }}</td>
-          <td>{{ p.typePaiement }}</td>
-        </tr>
-        <tr *ngIf="dossier?.paiements?.length === 0">
-          <td colspan="3" style="text-align:center; color:#888;">Aucun paiement enregistré</td>
-        </tr>
-      </tbody>
-    </table>
-  </div>
-</ng-container>
-
-<!-- Communications -->
-<ng-container *ngIf="ongletActif === 'communications'">
-  <div class="section">
-    <h3>💬 Communications</h3>
-    <div class="communications-list">
-      <div class="comm-item" *ngFor="let c of dossier?.communications"
-        [class.systeme]="c.origine === 'systeme'"
-        [class.client]="c.origine === 'client'">
-        <div class="comm-header">
-          <span class="comm-origine">{{ c.origine | uppercase }}</span>
-          <span class="comm-date">{{ c.dateEnvoi | date:'dd/MM/yyyy HH:mm' }}</span>
-        </div>
-        <div class="comm-message">{{ c.message }}</div>
-      </div>
-      <div *ngIf="dossier?.communications?.length === 0" style="color:#888; text-align:center; padding:20px;">
-        Aucune communication
-      </div>
-    </div>
-  </div>
-</ng-container>
-
-<!-- Actions -->
-<ng-container *ngIf="ongletActif === 'actions'">
-  <div class="section">
-    <h3>📥 Documents disponibles</h3>
-    <p class="section-desc">Téléchargez vos documents liés à ce dossier</p>
-
-    <div class="documents-list">
-      <div class="document-item">
-        <div class="doc-icon">📄</div>
-        <div class="doc-info">
-          <div class="doc-title">Reçu de situation</div>
-          <div class="doc-date">Montant impayé : {{ dossier?.montantImpaye | number }} TND</div>
-        </div>
-        <button class="dl-btn" (click)="telechargerRecu()">⬇ Télécharger</button>
-      </div>
-
-      <div class="document-item">
-        <div class="doc-icon">📄</div>
-        <div class="doc-info">
-          <div class="doc-title">Historique des actions</div>
-          <div class="doc-date">Généré automatiquement</div>
-        </div>
-        <button class="dl-btn" (click)="telechargerHistorique()">⬇ Télécharger</button>
-      </div>
-    </div>
-  </div>
-
-  <div class="section">
-    <h3>⚡ Actions rapides</h3>
-    <div class="actions-rapides">
-      <div class="action-card" (click)="ongletActif = 'overview'">
-        <span class="action-icon">✍️</span>
-        <div>
-          <div class="action-title">Déclarer une intention</div>
-          <div class="action-desc">Paiement ou réclamation</div>
-        </div>
-      </div>
-      <div class="action-card">
-        <span class="action-icon">📞</span>
-        <div>
-          <div class="action-title">Contacter l'agence</div>
-          <div class="action-desc">Support client</div>
-        </div>
-      </div>
-    </div>
-  </div>
-</ng-container>
-
-</div>
+</div> 

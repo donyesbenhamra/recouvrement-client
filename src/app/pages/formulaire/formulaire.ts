@@ -1,7 +1,7 @@
-import { Component, OnInit } from '@angular/core';
+import { Component, OnInit, TemplateRef } from '@angular/core';
 import { ActivatedRoute, Router } from '@angular/router';
 import { FormBuilder, FormGroup, Validators, ReactiveFormsModule } from '@angular/forms';
-import { CommonModule } from '@angular/common';
+import { CommonModule, NgIfContext } from '@angular/common';
 import { TokenService, ClientHistoriqueDto, DossierDto } from '../../services/token';
 import { RecouvrementService } from '../../services/recouvrement';
 import { HttpClient } from '@angular/common/http';
@@ -26,11 +26,13 @@ export class FormulaireComponent implements OnInit {
   fichierSelectionne: File | null = null;
 
   actionsDisponibles = [
-    { value: 'paiement_immediat', label: 'Paiement immédiat' },
-    { value: 'promesse_paiement', label: 'Promesse de paiement' },
-    { value: 'demande_echeance', label: 'Demande d\'échéancier' },
-  ];
-
+  { value: 'paiement_immediat', label: 'Règlement total' },
+  { value: 'paiement_partiel', label: 'Règlement partiel' },
+  { value: 'demande_echeance', label: "Demande d'échéancier" },
+  { value: 'demande_consolidation', label: 'Demande de consolidation' },
+ 
+];
+confirmationBlock: TemplateRef<NgIfContext<boolean>> | null | undefined;
   constructor(
     private route: ActivatedRoute,
     private router: Router,
@@ -106,8 +108,8 @@ export class FormulaireComponent implements OnInit {
   }
 
   telechargerRecu(): void {
-    window.open(`http://localhost:5203/api/client/recu/${this.token}/${this.idDossier}`, '_blank');
-  }
+  window.open(`http://localhost:5203/api/client/recu/${this.token}?idDossier=${this.idDossier}`, '_blank');
+}
 
   telechargerHistorique(): void {
     window.open(`http://localhost:5203/api/client/historique-pdf/${this.token}/${this.idDossier}`, '_blank');
@@ -125,7 +127,8 @@ export class FormulaireComponent implements OnInit {
       idDossier: this.idDossier,
       typeIntention: this.form.value.typeIntention,
       commentaire: this.form.value.commentaire,
-      datePaiementPrevue: this.form.value.datePaiementPrevue
+      datePaiementPrevue: this.form.value.datePaiementPrevue,
+     montantPropose: this.form.value.montantPropose
     };
 
     this.recouvrementService.soumettreReponse(payload).subscribe({
@@ -143,5 +146,12 @@ export class FormulaireComponent implements OnInit {
         this.loading = false;
       }
     });
+    this.form = this.fb.group({
+  typeIntention: ['', Validators.required],
+  datePaiementPrevue: [null],
+  montantPropose: [null],
+  commentaire: ['', Validators.maxLength(500)]
+});
   }
+  
 }

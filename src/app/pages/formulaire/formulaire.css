@@ -1,7 +1,7 @@
 * { box-sizing: border-box; margin: 0; padding: 0; }
 
 .page-wrapper {
-  max-width: 1200px;
+  max-width: 1600px;
   margin: 0 auto;
   font-family: 'Segoe UI', sans-serif;
   background: #f5f7fa;
@@ -52,6 +52,10 @@
   padding: 0 24px;
   overflow-x: auto;
   gap: 4px;
+  scrollbar-width: none;
+}
+.tabs::-webkit-scrollbar {
+  display: none;
 }
 .tab {
   padding: 14px 16px;
