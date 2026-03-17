@@ -68,15 +68,24 @@ confirmationBlock: TemplateRef<NgIfContext<boolean>> | null | undefined;
   commentaire: ['', Validators.maxLength(500)]
 });
 
-    this.form.get('typeIntention')?.valueChanges.subscribe(val => {
-      const dateCtrl = this.form.get('datePaiementPrevue');
-      if (val === 'paiement_partiel' || val === 'paiement_immediat' || val === 'demande_echeance') {
-        dateCtrl?.setValidators([Validators.required]);
-      } else {
-        dateCtrl?.clearValidators();
-      }
-      dateCtrl?.updateValueAndValidity();
-    });
+  this.form.get('typeIntention')?.valueChanges.subscribe(val => {
+  const dateCtrl = this.form.get('datePaiementPrevue');
+  const montantCtrl = this.form.get('montantPropose');
+
+  // Reset validators
+  dateCtrl?.clearValidators();
+  montantCtrl?.clearValidators();
+
+  if (val === 'demande_echeance') {
+    dateCtrl?.setValidators([Validators.required]);
+  }
+  if (val === 'paiement_partiel') {
+    montantCtrl?.setValidators([Validators.required]);
+  }
+
+  dateCtrl?.updateValueAndValidity();
+  montantCtrl?.updateValueAndValidity();
+});
   }
   get montantPaye(): number {
   if (!this.dossier?.paiements) return 0;
