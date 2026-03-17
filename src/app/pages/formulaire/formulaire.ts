@@ -26,8 +26,8 @@ export class FormulaireComponent implements OnInit {
   fichierSelectionne: File | null = null;
 
   actionsDisponibles = [
-  { value: 'paiement_immediat', label: 'Règlement total' },
-  { value: 'paiement_partiel', label: 'Règlement partiel' },
+  { value: 'paiement_immediat', label: 'Paiement immédiat' },
+  { value: 'paiement_partiel', label: 'Paiement partiel' },
   { value: 'demande_echeance', label: "Demande d'échéancier" },
   { value: 'demande_consolidation', label: 'Demande de consolidation' },
  
@@ -62,14 +62,15 @@ confirmationBlock: TemplateRef<NgIfContext<boolean>> | null | undefined;
     }
 
     this.form = this.fb.group({
-      typeIntention: ['', Validators.required],
-      datePaiementPrevue: [null],
-      commentaire: ['', Validators.maxLength(500)]
-    });
+  typeIntention: ['', Validators.required],
+  datePaiementPrevue: [null],
+  montantPropose: [null],
+  commentaire: ['', Validators.maxLength(500)]
+});
 
     this.form.get('typeIntention')?.valueChanges.subscribe(val => {
       const dateCtrl = this.form.get('datePaiementPrevue');
-      if (val === 'promesse_paiement') {
+      if (val === 'paiement_partiel' || val === 'paiement_immediat' || val === 'demande_echeance') {
         dateCtrl?.setValidators([Validators.required]);
       } else {
         dateCtrl?.clearValidators();

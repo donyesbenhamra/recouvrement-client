@@ -14,7 +14,6 @@
 
   <div class="tabs">
     <button class="tab" [class.active]="ongletActif === 'overview'" (click)="ongletActif = 'overview'">📊 Vue d'ensemble</button>
-    <button class="tab" [class.active]="ongletActif === 'echeances'" (click)="ongletActif = 'echeances'">📅 Échéances</button>
     <button class="tab" [class.active]="ongletActif === 'paiements'" (click)="ongletActif = 'paiements'">💵 Paiements</button>
     <button class="tab" [class.active]="ongletActif === 'relances'" (click)="ongletActif = 'relances'">📞 Relances</button>
     <button class="tab" [class.active]="ongletActif === 'communications'" (click)="ongletActif = 'communications'">💬 Communications</button>
@@ -97,15 +96,14 @@
           </div>
         </div>
 
-        <div class="field" *ngIf="form.get('typeIntention')?.value === 'promesse_paiement'">
-          <label>Date de paiement prévue *</label>
-          <input type="date" formControlName="datePaiementPrevue" />
-        </div>
-
-        <div class="field" *ngIf="form.get('typeIntention')?.value === 'paiement_partiel'">
-          <label>Montant proposé *</label>
-          <input type="number" formControlName="montantPropose" placeholder="Montant en TND" />
-        </div>
+        <div class="field" *ngIf=" form.get('typeIntention')?.value === 'demande_echeance'">
+  <label>Date souhaitée *</label>
+  <input type="date" formControlName="datePaiementPrevue" />
+</div>
+<div class="field" *ngIf="form.get('typeIntention')?.value === 'paiement_partiel'">
+  <label>Montant proposé *</label>
+  <input type="number" formControlName="montantPropose" placeholder="Montant en TND" />
+</div>
 
         <div class="field">
           <label>Commentaire (optionnel)</label>
@@ -130,31 +128,7 @@
 
   </ng-container>
 
-  <!-- Échéances -->
-  <ng-container *ngIf="ongletActif === 'echeances'">
-    <div class="section">
-      <h3>📅 Détail des échéances</h3>
-      <table>
-        <thead>
-          <tr><th>Montant</th><th>Date</th><th>Statut</th></tr>
-        </thead>
-        <tbody>
-          <tr *ngFor="let e of dossier?.echeances">
-            <td>{{ e.montant | number }} TND</td>
-            <td>{{ e.dateEcheance | date:'dd/MM/yyyy' }}</td>
-            <td>
-              <span class="status"
-                [class.payé]="e.statut === 'paye'"
-                [class.partiel]="e.statut === 'partiel'"
-                [class.impayé]="e.statut === 'impaye'">
-                {{ e.statut | uppercase }}
-              </span>
-            </td>
-          </tr>
-        </tbody>
-      </table>
-    </div>
-  </ng-container>
+  
 
   <!-- Paiements -->
   <ng-container *ngIf="ongletActif === 'paiements'">
