@@ -9,6 +9,10 @@ export interface IntentionPayload {
   datePaiementPrevue?: string;
 }
 
+export interface ClientMessagePayload {
+  message: string;
+}
+
 @Injectable({ providedIn: 'root' })
 export class RecouvrementService {
 
@@ -18,5 +22,10 @@ export class RecouvrementService {
 
   soumettreReponse(payload: IntentionPayload): Observable<any> {
     return this.http.post(`${this.apiUrl}/intention`, payload);
+  }
+
+  envoyerMessageClient(token: string, idDossier: number, message: string): Observable<any> {
+    const payload: ClientMessagePayload = { message };
+    return this.http.post(`${this.apiUrl}/client/message/${token}/${idDossier}`, payload);
   }
 }

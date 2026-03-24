@@ -1,4 +1,4 @@
-<div class="page-wrapper">
+<div class="page-wrapper"> 
 
   <div class="bank-header">
     <img src="/logo-stb.png" alt="STB Bank" class="bank-logo" />
@@ -23,6 +23,12 @@
   <!-- Vue d'ensemble -->
   <ng-container *ngIf="ongletActif === 'overview'">
 
+    <div class="section" *ngIf="dataLoading" style="text-align:center; color:#666; padding:24px;">
+      Chargement du dossier...
+    </div>
+
+    <ng-container *ngIf="!dataLoading && dossier">
+
     <div class="stats-grid">
       <div class="stat-card">
         <div class="stat-label">Montant total</div>
@@ -42,16 +48,19 @@
       </div>
     </div>
 
-    <div class="progress-section">
-      <div class="progress-label"><span>Progression du paiement</span></div>
-      <div class="progress-bar">
-        <div class="progress-fill" style="width: 70%"></div>
-      </div>
-      <div class="progress-legend">
-        <span>Payé</span>
-        <span>Impayé</span>
-      </div>
-    </div>
+   <div class="progress-section">
+  <div class="progress-label">
+    <span>Progression du paiement</span>
+    <span>: {{ progressionPaiement }}%</span>
+  </div>
+  <div class="progress-bar">
+    <div class="progress-fill" [style.width.%]="progressionPaiement"></div>
+  </div>
+  <div class="progress-legend">
+    <span>Payé : {{ (dossier?.montantInitial || 0) - (dossier?.montantImpaye || 0) | number }} TND</span>
+    <span>Impayé : {{ dossier?.montantImpaye | number }} TND</span>
+  </div>
+</div>
 
     <div class="section">
       <h3>📋 Détail des échéances</h3>
@@ -126,6 +135,8 @@
       </div>
     </ng-template>
 
+    </ng-container>
+
   </ng-container>
 
   
@@ -164,7 +175,7 @@
       <h3>📋 Historique des relances</h3>
       <table>
         <thead>
-          <tr><th>Date</th><th>Canal</th><th>Statut</th></tr>
+          <tr><th>Date</th><th>Canal</th><th>Statut</th><th>Réponse banque</th></tr>
         </thead>
         <tbody>
           <tr *ngFor="let r of dossier?.relances">
@@ -178,33 +189,61 @@
                 {{ r.statut | uppercase }}
               </span>
             </td>
+            <td>
+              <div *ngIf="r.reponseBanque; else noReply">
+                <div style="font-size: 12px; color:#666;" *ngIf="r.dateReponseBanque">
+                  {{ r.dateReponseBanque | date:'dd/MM/yyyy HH:mm' }}
+                </div>
+                <div>{{ r.reponseBanque }}</div>
+              </div>
+              <ng-template #noReply>
+                <span style="color:#888;">—</span>
+              </ng-template>
+            </td>
           </tr>
         </tbody>
       </table>
     </div>
   </ng-container>
 
-  <!-- Communications -->
-  <ng-container *ngIf="ongletActif === 'communications'">
-    <div class="section">
-      <h3>💬 Communications</h3>
-      <div class="communications-list">
-        <ng-container *ngFor="let comm of dossier?.communications">
-          <div class="comm-item client" *ngIf="comm.origine === 'agent'">
-            <div class="comm-header">
-              <span class="comm-origine">🏦 BANQUE</span>
-              <span class="comm-date">{{ comm.dateEnvoi | date:'dd/MM/yyyy HH:mm' }}</span>
-            </div>
-            <div class="comm-message">{{ comm.message }}</div>
+ <!-- Communications -->
+<ng-container *ngIf="ongletActif === 'communications'">
+  <div class="section">
+    <h3>💬 Vos messages envoyés à la banque</h3>
+    
+    <form [formGroup]="messageForm" (ngSubmit)="envoyerMessage()" style="margin-bottom:16px;">
+      <div class="field">
+        <label>Nouveau message</label>
+        <textarea
+          formControlName="message"
+          rows="3"
+          placeholder="Écrivez votre message à la banque..."></textarea>
+      </div>
+      <button type="submit" [disabled]="messageForm.invalid || messageSending">
+        {{ messageSending ? 'Envoi...' : '📨 Envoyer' }}
+      </button>
+    </form>
+
+    <div class="communications-list">
+      <ng-container *ngFor="let comm of dossier?.communications">
+        <div
+          class="comm-item client"
+          *ngIf="comm.origine === 'client'">
+          <div class="comm-header">
+            <span class="comm-origine">👤 VOUS</span>
+            <span class="comm-date">{{ comm.dateEnvoi | date:'dd/MM/yyyy HH:mm' }}</span>
           </div>
-        </ng-container>
-        <div style="color:#888; text-align:center; padding:20px;">
-          Aucun message de votre banque
+          <div class="comm-message">{{ comm.message }}</div>
         </div>
+      </ng-container>
+
+      <div *ngIf="(dossier?.communications?.filter(c => c.origine === 'client')?.length || 0) === 0"
+           style="color:#888; text-align:center; padding:20px;">
+        Vous n'avez pas encore envoyé de message.
       </div>
     </div>
-  </ng-container>
-
+  </div>
+</ng-container>
   <!-- Actions -->
   <ng-container *ngIf="ongletActif === 'actions'">
     <div class="section">

@@ -12,6 +12,8 @@ export interface RelanceDto {
   dateRelance: string;
   moyen: string;
   statut: string;
+  reponseBanque?: string | null;
+  dateReponseBanque?: string | null;
 }
 
 export interface DossierDto {
