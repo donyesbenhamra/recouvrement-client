@@ -1,0 +1,179 @@
+<div class="page active">
+  <div class="tb">
+    <div class="pt">Moteur de scoring IA <span style="font-weight:400; color:#64748b; font-size:16px; margin-left:10px;">Priorisation des dossiers</span></div>
+    <div class="ta">
+      <button class="btn" (click)="exporterExcel()">Exporter rapport</button>
+      <button class="btn bp" (click)="recalculerTout()">Recalculer tous les scores</button>
+    </div>
+  </div>
+
+  <div class="kg" style="grid-template-columns: repeat(4, 1fr);">
+    <div class="kpi">
+      <div class="kl">Dossiers scorés</div>
+      <div class="kv">247</div>
+    </div>
+    <div class="kpi kd">
+      <div class="kl">Risque élevé (> 60 pts)</div>
+      <div class="kv">118</div>
+    </div>
+    <div class="kpi kw">
+      <div class="kl">Risque moyen (30-60)</div>
+      <div class="kv">86</div>
+    </div>
+    <div class="kpi kok">
+      <div class="kl">Risque faible (&lt; 30 pts)</div>
+      <div class="kv">43</div>
+    </div>
+  </div>
+
+  <div class="risk-bar-container">
+    <div class="risk-segment red" style="width: 47%;"></div>
+    <div class="risk-segment green" style="width: 18%;"></div>
+    <div class="risk-segment orange" style="width: 35%;"></div>
+  </div>
+
+  <div class="scoring-grid">
+    <div>
+      <div class="filters-row">
+        <select>
+          <option>État du Dossier</option>
+        </select>
+        <input type="text" placeholder="Rechercher un client ou #DOS..." style="width: 300px;">
+      </div>
+
+      <div class="tw">
+        <table>
+          <thead>
+            <tr>
+              <th>Client & Réf</th>
+              <th>Retard</th>
+              <th>Pts Retard</th>
+              <th>Pts Hist.</th>
+              <th>Pts Gar.</th>
+              <th>Pts Int.</th>
+              <th>Score Total</th>
+              <th>Niveau</th>
+              <th>Action</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr *ngFor="let d of dossiers" 
+                class="clickable-row" 
+                [class.selected]="selectedDossier === d"
+                (click)="selectDossier(d)">
+              <td style="font-weight: 500;">
+                <div>{{ d.client }}</div>
+                <div style="font-size: 11px; color: #64748b;">{{ d.ref }}</div>
+              </td>
+              <td>{{ d.retard }}</td>
+              <td>{{ formatPts(d.ptsRetard) }}</td>
+              <td>{{ formatPts(d.ptsHist) }}</td>
+              <td>{{ formatPts(d.ptsGar) }}</td>
+              <td>{{ formatPts(d.ptsInt) }}</td>
+              <td>
+                <div class="score-progress">
+                  <div class="score-track">
+                    <div class="score-fill" 
+                         [style.width.%]="d.score"
+                         [style.backgroundColor]="d.score > 80 ? '#ef4444' : (d.score > 50 ? '#f59e0b' : '#10b981')">
+                    </div>
+                  </div>
+                  <span class="score-val">{{ d.score }}</span>
+                </div>
+              </td>
+              <td>
+                <span class="b" [ngClass]="d.niveau === 'Elevé' ? 'bd3' : (d.niveau === 'Moyen' ? 'bw' : 'bok')">{{ d.niveau }}</span>
+              </td>
+              <td><span class="al">Recalculer</span></td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+      
+      <!-- Pagination -->
+      <div class="pag">
+        <div class="pg">«</div>
+        <div class="pg">‹</div>
+        <div class="pg active">1</div>
+        <div class="pg">2</div>
+        <div class="pg">3</div>
+        <div class="pg" style="pointer-events:none; border:none; color:#64748b; background:transparent">...</div>
+        <div class="pg">›</div>
+        <div class="pg">»</div>
+      </div>
+    </div>
+
+    <!-- Right Panel -->
+    <div class="side-panel" *ngIf="selectedDossier">
+      <div class="panel-card">
+        <div class="panel-title">
+          Détail du Score
+          <span class="score-badge" [style.backgroundColor]="selectedDossier.score > 80 ? '#fee2e2' : (selectedDossier.score > 50 ? '#fef3c7' : '#dcfce7')"
+                [style.color]="selectedDossier.score > 80 ? '#ef4444' : (selectedDossier.score > 50 ? '#f59e0b' : '#10b981')">
+            Score {{ selectedDossier.score }} / 100
+          </span>
+        </div>
+
+        <div class="detail-item" *ngFor="let det of selectedDossier.details">
+          <div>
+            <div class="detail-label">{{ det.label }}</div>
+            <div class="detail-desc">{{ det.desc }}</div>
+          </div>
+          <div class="detail-pts" [style.color]="getPtsColor(det.pts)">
+            {{ formatPts(det.pts) }} pts
+          </div>
+        </div>
+
+        <div class="formula-box" *ngIf="selectedDossier.details.length > 0">
+          <strong>Formule appliquée</strong>
+          <span style="font-family: monospace; font-size: 14px;">50 + 40 + 20 - 10 = <span style="color: #ef4444; font-weight: bold;">100 pts</span></span>
+        </div>
+        <div *ngIf="selectedDossier.details.length === 0" style="text-align:center; color:#64748b; font-size:13px; padding:20px 0;">
+          Détails non disponibles pour ce dossier.
+        </div>
+      </div>
+
+      <div class="panel-card" *ngIf="selectedDossier.reco">
+        <div class="panel-title" style="margin-bottom: 15px;">
+          Recommandation IA
+        </div>
+        <div class="reco-alert">
+          Alerte: {{ selectedDossier.reco.alerte }}
+        </div>
+
+        <div class="reco-text">
+          <strong>Situation :</strong> {{ selectedDossier.reco.situation }}
+        </div>
+        
+        <div class="reco-text">
+          <strong>Analyse :</strong> {{ selectedDossier.reco.analyse }}
+        </div>
+
+        <div class="reco-action">
+          <strong>Action requise :</strong> {{ selectedDossier.reco.action }}
+        </div>
+
+        <div class="reco-date">
+          Analyse du {{ selectedDossier.reco.date }}
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Overlay de Scanning IA -->
+  <div class="scanning-overlay" *ngIf="isScanning">
+    <div class="scanning-card">
+      <div class="scanning-icon">
+        <div class="pulse-ring"></div>
+        <span style="font-size: 32px;">🧠</span>
+      </div>
+      <div class="scanning-title">Analyse IA en cours...</div>
+      <div class="scanning-step">{{ scanningStep }}</div>
+      <div class="scan-progress-container">
+        <div class="scan-progress-fill" [style.width.%]="scanningProgress"></div>
+      </div>
+      <div class="scanning-footer">Veuillez ne pas fermer cette fenêtre pendant le traitement</div>
+    </div>
+  </div>
+
+</div>

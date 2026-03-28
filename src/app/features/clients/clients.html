@@ -1,0 +1,216 @@
+<div class="page">
+
+  <!-- Header -->
+  <div class="tb">
+    <div class="pt">Gestion de liste des clients</div>
+    <div class="ta">
+      <button class="btn" (click)="exporterExcel()">↑ Exporter Excel</button>
+      <button class="btn bp" (click)="creerClient()">+ Nouveau client</button>
+    </div>
+  </div>
+
+  <!-- KPIs -->
+  <div class="kg" style="grid-template-columns: repeat(5, 1fr)">
+    <div class="kpi">
+      <div class="kl">Total dossiers</div>
+      <div class="kv">{{ stats.total }}</div>
+      <div class="ks">en base de données</div>
+    </div>
+    <div class="kpi">
+      <div class="kl">Total emprunté (Impayé)</div>
+      <div class="kv">{{ stats.montant.toLocaleString() }} DT</div>
+    </div>
+    <div class="kpi kd">
+      <div class="kl">Contentieux</div>
+      <div class="kv">{{ stats.contentieux }}</div>
+    </div>
+    <div class="kpi kw">
+      <div class="kl">Amiable</div>
+      <div class="kv">{{ stats.amiable }}</div>
+    </div>
+    <div class="kpi kok">
+      <div class="kl">Régularisé</div>
+      <div class="kv">{{ stats.regularise }}</div>
+    </div>
+  </div>
+
+  <!-- Filtres -->
+  <div class="fb">
+    <select [(ngModel)]="filterStatut">
+      <option value="">Statut</option>
+      <option value="Contentieux">Contentieux</option>
+      <option value="Amiable">Amiable</option>
+      <option value="Régularisé">Régularisé</option>
+      <option value="Judiciaire">Judiciaire</option>
+    </select>
+    <select [(ngModel)]="filterAgence">
+      <option value="">Agence</option>
+      <option>Hédi Nouira</option>
+      <option>Lac II</option>
+      <option>Ariana Menzah</option>
+      <option>Sfax El Jadida</option>
+    </select>
+    <input type="search" placeholder="Rechercher…" [(ngModel)]="filterSearch" style="width:200px">
+  </div>
+
+  <!-- Table -->
+  <div class="tw">
+    <table>
+      <thead>
+        <tr>
+          <th>N° Dossier</th>
+          <th>Client</th>
+          <th>Téléphone</th>
+          <th>Email</th>
+          <th>Agence STB</th>
+          <th>Type Crédit</th>
+          <th>Montant Dû</th>
+          <th>Retard</th>
+          <th>Statut</th>
+          <th>Actions</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr *ngFor="let c of filteredClients">
+          <td>{{ c.ref }}</td>
+          <td style="font-weight:500">{{ c.nom }}</td>
+          <td>{{ c.tel }}</td>
+          <td>{{ c.email }}</td>
+          <td>{{ c.agence }}</td>
+          <td>{{ c.typeCredit }}</td>
+          <td [style.color]="c.retardColor">{{ c.montant }}</td>
+          <td [style.color]="c.retardColor">{{ c.retard }}</td>
+          <td><span class="b" [ngClass]="c.badgeClass">{{ c.statut }}</span></td>
+          <td>
+            <ng-container *ngIf="c.id !== 3">
+              <span class="al" (click)="traiter(c)">Traiter</span>
+              <span class="al" (click)="voirFiche(c)">Fiche</span>
+            </ng-container>
+            <ng-container *ngIf="c.id === 3">
+              <span class="al" (click)="voirFiche(c)">Fiche</span>
+              <span class="al" style="color: #64748b">Archiver</span>
+            </ng-container>
+          </td>
+        </tr>
+      </tbody>
+    </table>
+  </div>
+
+  <!-- Pagination -->
+  <div class="pag">
+    <div class="pg">«</div>
+    <div class="pg">‹</div>
+    <div class="pg active">1</div>
+    <div class="pg">2</div>
+    <div class="pg">3</div>
+    <div class="pg">›</div>
+    <div class="pg">»</div>
+  </div>
+
+  <!-- Drawer / Tiroir Fiche Client -->
+  <div class="drawer-backdrop" *ngIf="selectedClient" (click)="fermerTiroir()" [class.visible]="drawerOpen"></div>
+  <div class="drawer" *ngIf="selectedClient" [class.open]="drawerOpen">
+    
+    <div class="drawer-header">
+      <div class="drawer-header-content">
+        <div style="font-size: 20px; font-weight: 700; color: #1e293b;">{{ selectedClient.nom }}</div>
+        <div style="font-size: 13px; color: #64748b;">Réf: {{ selectedClient.ref }} &nbsp;·&nbsp; Agence {{ selectedClient.agence }}</div>
+      </div>
+      <button class="drawer-close" (click)="fermerTiroir()">&times;</button>
+    </div>
+
+    <div class="drawer-body">
+      <!-- Section Infos -->
+      <div class="drawer-section">
+        <div class="drawer-title">Coordonnées</div>
+        <div class="info-row">
+          <span class="info-label">Téléphone</span>
+          <span class="info-value">{{ selectedClient.tel }}</span>
+        </div>
+        <div class="info-row">
+          <span class="info-label">Email</span>
+          <span class="info-value">{{ selectedClient.email }}</span>
+        </div>
+      </div>
+
+      <!-- Section Finance -->
+      <div class="drawer-section">
+        <div class="drawer-title">Détails de la créance</div>
+        <div class="kpi-mini">
+          <div style="color: #64748b; font-size: 12px; margin-bottom: 5px;">Montant Total en retard</div>
+          <div style="font-size: 24px; font-weight: 700; color: #ef4444;">{{ selectedClient.montant }}</div>
+          <div style="font-size: 12px; color: #ef4444; margin-top: 5px; font-weight: 600;">Retard: {{ selectedClient.retard }}</div>
+        </div>
+        <div class="info-row" style="margin-top: 15px;">
+          <span class="info-label">Type de Crédit</span>
+          <span class="info-value">{{ selectedClient.typeCredit }}</span>
+        </div>
+        <div class="info-row">
+          <span class="info-label">Statut Dossier</span>
+          <span class="b" [ngClass]="selectedClient.badgeClass">{{ selectedClient.statut }}</span>
+        </div>
+      </div>
+
+      <!-- Chargement des détails -->
+      <div *ngIf="!selectedDossierDetails" style="padding: 20px; text-align: center; color: #64748b;">
+        <div class="spinner-small" style="margin-bottom: 10px;"></div>
+        Chargement des détails financiers...
+      </div>
+
+      <ng-container *ngIf="selectedDossierDetails">
+        <!-- Section Échéances -->
+        <div class="drawer-section">
+          <div class="drawer-title">Échéances</div>
+          <div class="mini-table">
+            <div class="mt-header">
+              <span>Date</span>
+              <span>Montant</span>
+              <span>Statut</span>
+            </div>
+            <div class="mt-row" *ngFor="let e of selectedDossierDetails.echeances">
+              <span>{{ e.dateEcheance | date:'dd/MM/yyyy' }}</span>
+              <span>{{ e.montant.toLocaleString() }} DT</span>
+              <span [style.color]="e.statut === 'impaye' ? '#ef4444' : '#10b981'">{{ e.statut }}</span>
+            </div>
+          </div>
+        </div>
+
+        <!-- Section Paiements -->
+        <div class="drawer-section">
+          <div class="drawer-title">Derniers Paiements</div>
+          <div class="mini-table">
+            <div class="mt-row" *ngFor="let p of selectedDossierDetails.historiquePaiements">
+              <span style="color: #10b981;">+ {{ p.montantPaye.toLocaleString() }} DT</span>
+              <span style="font-size: 11px; color: #64748b;">{{ p.datePaiement | date:'dd/MM/yyyy' }}</span>
+              <span style="font-size: 11px;">{{ p.typePaiement }}</span>
+            </div>
+            <div *ngIf="selectedDossierDetails.historiquePaiements.length === 0" style="font-size: 12px; color: #64748b; padding: 10px;">
+              Aucun paiement enregistré.
+            </div>
+          </div>
+        </div>
+      </ng-container>
+
+      <!-- Section Actions (Recouvrement) -->
+      <div class="drawer-section action-section">
+        <div class="drawer-title" style="margin-bottom: 20px;">Actions de Recouvrement Rapide</div>
+        
+        <button class="action-btn primary" (click)="actionRelance('token')">
+          <span style="font-size: 16px; margin-bottom: 4px;">🔗</span>
+          Générer et envoyer Lien Token
+        </button>
+        
+        <div style="display: flex; gap: 10px; margin-top: 10px;">
+          <button class="action-btn secondary" (click)="actionRelance('sms')" style="flex: 1;">
+            📱 SMS Relance
+          </button>
+          <button class="action-btn secondary" (click)="actionRelance('email')" style="flex: 1;">
+            ✉️ Email Relance
+          </button>
+        </div>
+      </div>
+    </div>
+
+  </div>
+
+</div>

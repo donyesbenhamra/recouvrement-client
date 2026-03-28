@@ -1,0 +1,100 @@
+<div class="page active">
+  <!-- Header -->
+  <div class="tb">
+    <div class="pt">Gestion des impayés</div>
+    <div class="ta">
+      <button class="btn" (click)="exporterExcel()">↑ Exporter Excel</button>
+      <button class="btn" (click)="exporterPDF()">Exporter PDF</button>
+    </div>
+  </div>
+
+  <!-- KPIs -->
+  <div class="kg" style="grid-template-columns: repeat(4, 1fr)">
+    <div class="kpi">
+      <div class="kl">Total impayé</div>
+      <div class="kv">18 000,00 TND</div>
+    </div>
+    <div class="kpi kw">
+      <div class="kl">Intérêts dus (>90j)</div>
+      <div class="kv">592,60 TND</div>
+    </div>
+    <div class="kpi kd">
+      <div class="kl">Total à recouvrer</div>
+      <div class="kv">18 862,60 TND</div>
+      <div class="ks">principal + intérêts + frais</div>
+    </div>
+    <div class="kpi kok">
+      <div class="kl">Déjà récupéré</div>
+      <div class="kv">5 000,00 TND</div>
+      <div class="ks">taux 21.7%</div>
+    </div>
+  </div>
+
+  <div style="display: flex; justify-content: space-between; align-items:flex-end; margin-bottom: 16px;">
+    <h3 style="margin:0; font-weight:600; color:#1e293b; font-size:18px;">Détail financier par dossier</h3>
+
+    <div class="fb" style="margin: 0; flex-direction: column; align-items: flex-end; gap: 5px;">
+      <select [(ngModel)]="filterStatut" style="min-width: 150px;">
+        <option value="">Tous</option>
+        <option value="Avec intérêt >=90j">Avec intérêt >=90j</option>
+        <option value="Sans intérêt">Sans intérêt</option>
+        <option value="Soldé">Soldé</option>
+      </select>
+    </div>
+  </div>
+
+  <!-- Table -->
+  <div class="tw">
+    <table>
+      <thead>
+        <tr>
+          <th>Nom & Prénom</th>
+          <th>Réf Dossier</th>
+          <th>Date Octroi</th>
+          <th>Date Échéance</th>
+          <th>Montant Initial</th>
+          <th>Déjà Payé</th>
+          <th>Principal Dû</th>
+          <th>Frais</th>
+          <th>Taux</th>
+          <th>Retard</th>
+          <th>Intérêts >=90j</th>
+          <th>Total à Régler</th>
+          <th>Actions</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr *ngFor="let i of filteredImpayes">
+          <td style="font-weight:500">{{ i.nom }}</td>
+          <td>{{ i.ref }}</td>
+          <td>{{ i.dateOctroi }}</td>
+          <td>{{ i.dateEcheance }}</td>
+          <td>{{ i.montantInitial }}</td>
+          <td style="color:#10b981">{{ i.dejaPaye }}</td>
+          <td style="font-weight:600">{{ i.principalDu }}</td>
+          <td>{{ i.frais }}</td>
+          <td>{{ i.taux }}</td>
+          <td [style.color]="i.retard === 'Soldé' ? '#10b981' : (i.retard === '210j' ? '#ef4444' : '#f59e0b')">{{
+            i.retard }}</td>
+          <td [style.color]="i.interets !== '0.000 DT' ? '#ef4444' : ''">{{ i.interets }}</td>
+          <td style="font-weight:600">{{ i.totalAregler }}</td>
+          <td>
+            <span class="al" (click)="relancer(i)">Relancer</span>
+            <span class="al" (click)="voir(i)">Voir</span>
+          </td>
+        </tr>
+      </tbody>
+    </table>
+  </div>
+
+  <!-- Pagination -->
+  <div class="pag">
+    <div class="pg">«</div>
+    <div class="pg">‹</div>
+    <div class="pg active">1</div>
+    <div class="pg">2</div>
+    <div class="pg">3</div>
+    <div class="pg">›</div>
+    <div class="pg">»</div>
+  </div>
+</div>

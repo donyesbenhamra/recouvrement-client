@@ -1,0 +1,45 @@
+<div class="page active">
+  <div class="tb">
+    <div class="pt">Générer un lien token sécurisé</div>
+  </div>
+
+  <div class="tw"
+    style="padding: 30px; max-width: 600px; margin: 0 auto; border-radius: 12px; border: 1px solid #e2e8f0; background: white;">
+    <div class="form-group">
+      <label style="font-size: 13px; font-weight: 600; color: #1e293b; margin-bottom: 8px; display: block;">Client &
+        dossier</label>
+      <select [(ngModel)]="selectedClient"
+        style="width: 100%; border: 2px solid #e2e8f0; padding: 12px; font-size: 14px; border-radius: 8px;">
+        <option value="">Sonia Ben Rejeb — #2026-002 — Crédit Auto — 18 200 DT</option>
+        <option value="1">Mohamed Amine Ayari — #2026-001 — Crédit Immo</option>
+      </select>
+    </div>
+
+    <div style="margin-top: 20px;">
+      <div class="form-group" style="width: 100%;">
+        <label style="font-size: 13px; font-weight: 600; color: #1e293b; margin-bottom: 8px; display: block;">Canal
+          d'envoi</label>
+        <select [(ngModel)]="selectedCanal"
+          style="width: 100%; border: 2px solid #e2e8f0; padding: 12px; font-size: 14px; border-radius: 8px;">
+          <option>E-mail</option>
+          <option>SMS</option>
+          <option>Email & SMS</option>
+        </select>
+      </div>
+    </div>
+
+    <div
+      style="margin-top: 25px; padding: 15px; background: #f8fafc; border-radius: 8px; border: 1px solid #e2e8f0; font-size: 13px; color: #64748b;">
+      <div style="font-weight: 600; margin-bottom: 5px; color: #1e293b;">Aperçu du lien (lecture seule)</div>
+      <input type="text" [value]="generatedLink" readonly
+        style="width:100%; border:none; background: transparent; color:#1e293b; font-family: monospace; outline: none; padding: 0;">
+    </div>
+
+    <div style="display: flex; gap: 15px; margin-top: 30px; justify-content: flex-end;">
+      <button class="btn" style="border: 2px solid #e2e8f0; font-weight: 600; padding: 10px 20px;"
+        (click)="annuler()">Annuler</button>
+      <button class="btn bp" style="font-weight: 600; padding: 10px 20px;" (click)="generer()">Générer et
+        envoyer</button>
+    </div>
+  </div>
+</div>

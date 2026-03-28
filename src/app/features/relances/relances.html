@@ -1,0 +1,158 @@
+<div class="page active">
+  <div class="tb">
+    <div class="pt">Gestion des relances</div>
+    <div class="ta">
+      <button class="btn" (click)="exporterExcel()">↑ Exporter historique</button>
+      <button class="btn bp" routerLink="/generer-token">+ Générer token</button>
+    </div>
+  </div>
+
+  <div class="kg" style="grid-template-columns: repeat(3, 1fr)">
+    <div class="kpi">
+      <div class="kl">Total relances envoyées</div>
+      <div class="kv">312</div>
+    </div>
+    <div class="kpi kw">
+      <div class="kl">En attente de réponse</div>
+      <div class="kv">5</div>
+      <div class="ks">sans réponse client</div>
+    </div>
+    <div class="kpi kok">
+      <div class="kl">Formulaires soumis</div>
+      <div class="kv">198</div>
+      <div class="ks">taux réponse 63%</div>
+    </div>
+  </div>
+
+  <div class="relance-grid" style="display: block;">
+
+    <div class="channels-container">
+      <div style="font-weight: 600; margin-bottom: 12px; font-size: 16px;">Les 3 canaux de relance disponibles</div>
+
+      <div class="channels-cards">
+        <div class="ch-card">
+          <div class="ch-icon">📞</div>
+          <div class="ch-stats">
+            <div>
+              <div class="ch-v">27</div>
+              <div class="ch-l">appels</div>
+            </div>
+            <div>
+              <div class="ch-v">63%</div>
+              <div class="ch-l">décrochés</div>
+            </div>
+            <div>
+              <div class="ch-v">3</div>
+              <div class="ch-l">non joignables</div>
+            </div>
+          </div>
+          <button class="btn" style="border: 2px solid #1e293b; font-weight: 600; width: 100%;" (click)="enregistrerAppel()">Enregistrer un
+            appel</button>
+        </div>
+
+        <div class="ch-card">
+          <div class="ch-icon">💬 SMS</div>
+          <div class="ch-stats">
+            <div>
+              <div class="ch-v">98</div>
+              <div class="ch-l">envoyés</div>
+            </div>
+            <div>
+              <div class="ch-v">78%</div>
+              <div class="ch-l">reçus</div>
+            </div>
+            <div>
+              <div class="ch-v">11</div>
+              <div class="ch-l">en attente</div>
+            </div>
+          </div>
+          <button class="btn" style="border: 2px solid #1e293b; font-weight: 600; width: 100%;" (click)="envoyerSMS()">Envoyer un SMS de
+            relance</button>
+        </div>
+
+        <div class="ch-card">
+          <div class="ch-icon">✉️</div>
+          <div class="ch-stats">
+            <div>
+              <div class="ch-v">187</div>
+              <div class="ch-l">envoyés</div>
+            </div>
+            <div>
+              <div class="ch-v">61%</div>
+              <div class="ch-l">ouverts</div>
+            </div>
+            <div>
+              <div class="ch-v">24</div>
+              <div class="ch-l">en attente</div>
+            </div>
+          </div>
+          <button class="btn" style="border: 2px solid #1e293b; font-weight: 600; width: 100%;" (click)="envoyerEmail()">Envoyer email de
+            relance</button>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div style="display: flex; justify-content: space-between; align-items:flex-end; margin-bottom: 16px;">
+    <h3 style="margin:0; font-weight:600; color:#1e293b; font-size:18px;">Historique des relances — SMS & Email</h3>
+
+    <div class="fb" style="margin: 0; gap: 5px;">
+      <select style="min-width: 120px;">
+        <option value="">Tous les canaux</option>
+      </select>
+      <select style="min-width: 120px;">
+        <option value="">Tous les statuts</option>
+      </select>
+    </div>
+  </div>
+
+  <div class="tw">
+    <table>
+      <thead>
+        <tr>
+          <th>N° Dossier</th>
+          <th>Client</th>
+          <th>Téléphone</th>
+          <th>Email</th>
+          <th>Canal</th>
+          <th>Date envoi</th>
+          <th>Token</th>
+          <th>Statut</th>
+          <th>Réponse</th>
+          <th>Actions</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr *ngFor="let h of historique">
+          <td>{{ h.ref }}</td>
+          <td style="font-weight:500">{{ h.client }}</td>
+          <td>{{ h.tel }}</td>
+          <td>{{ h.email }}</td>
+          <td>{{ h.canal }}</td>
+          <td>{{ h.date }}</td>
+          <td style="font-family: monospace;">{{ h.token }}</td>
+          <td>
+            <span class="b"
+              [ngClass]="{'bg': h.statut==='En attente' || h.statut==='Utilisé' || h.statut==='Non consulté', 'bok': h.statut==='Répondu'}">{{
+              h.statut }}</span>
+          </td>
+          <td [style.color]="h.reponse !== 'Aucune' ? '#10b981' : ''">{{ h.reponse }}</td>
+          <td>
+            <span class="al" (click)="relancer(h)">Relancer</span>
+            <span class="al" (click)="voir(h)">Voir</span>
+          </td>
+        </tr>
+      </tbody>
+    </table>
+  </div>
+
+  <div class="pag">
+    <div class="pg">«</div>
+    <div class="pg">‹</div>
+    <div class="pg active">1</div>
+    <div class="pg">2</div>
+    <div class="pg">3</div>
+    <div class="pg">›</div>
+    <div class="pg">»</div>
+  </div>
+</div>
